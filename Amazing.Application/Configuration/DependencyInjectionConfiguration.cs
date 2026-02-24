@@ -34,6 +34,7 @@ namespace Amazing.Application.Configuration
             services.AddTransient<PostQueries>();
             services.AddTransient<ContentMutations>();
             services.AddTransient<ContentQueries>();
+
         }
 
         public static void ConfigureEnumType(IServiceCollection services)
@@ -65,6 +66,8 @@ namespace Amazing.Application.Configuration
             services.AddTransient<UserGraphType>();
             services.AddTransient<PostGraphType>();
             services.AddTransient<ContentGraphType>();
+            services.AddTransient<EContentTypeGraphType>();
+            services.AddTransient<UpdateContentInputType>();
         }
 
         public static void ConfigureSchema(IServiceCollection services)

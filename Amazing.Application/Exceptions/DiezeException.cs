@@ -9,7 +9,7 @@ namespace Amazing.Application.Exceptions
 
         public AmazingException(HttpStatusCode statusCode, string message) : base(message)
         {
-            this.Status = Status;
+            this.Status = statusCode; //issue with assigning on itself
         }
     }
 }
