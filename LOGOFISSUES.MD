@@ -11,3 +11,6 @@
 
 Table per Hierarchy (TPH) inheritance in Entity Framework Core is used because of its simplicity and, most importantly, its superior query performance 
 
+3. HOW TO GUIDE FOR INTERN
+
+HOWTO-UPDATE CONTENT TYPES.pdf
