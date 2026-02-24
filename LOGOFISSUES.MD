@@ -2,9 +2,10 @@
 
 1. Changes made
 * updated Newtonsoft.Json to 13.0.3 
-* appsettings.json missing connection strings and tokens
+* added secrets.json missing connection strings and tokens
 * app.UseAuthentication(); missing in startup
 * PostQueries, Content Queries missing
+* 
 
 2. Finish the "Content"
 
