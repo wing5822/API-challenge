@@ -17,4 +17,4 @@ namespace Amazing.API
                     webBuilder.UseStartup<Startup>();
                 });
     }
-}
+} 

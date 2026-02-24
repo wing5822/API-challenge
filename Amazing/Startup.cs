@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
+using System;
 
 namespace Amazing.API
 {
@@ -21,6 +22,7 @@ namespace Amazing.API
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", false, true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true)
+                .AddJsonFile("secrets.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables();
 
             this.Configuration = builder.Build();
@@ -30,6 +32,8 @@ namespace Amazing.API
         public IWebHostEnvironment Environment { get; }
         public IConfiguration Configuration { get; }
 
+
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -38,12 +42,15 @@ namespace Amazing.API
                 .AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
             services.AddSession();
-            services.AddTransient<IJsonWebTokenValidator>(provider => new JsonWebTokenValidator(this.Configuration["Tokens:Key"], this.Configuration["Tokens:Issue"], this.Configuration["Tokens:Audience"]));
+            services.AddTransient<IJsonWebTokenValidator>(provider => new JsonWebTokenValidator(this.Configuration["Tokens:Key"], this.Configuration["Tokens:Issuer"], this.Configuration["Tokens:Audience"]));
             services.AddTransient<IJsonWebTokenProvider, JsonWebTokenGeneratorProvider>();
+
+            var connectionString = this.Configuration.GetConnectionString("ApiChallengeDb")
+                ?? throw new InvalidOperationException("Connection string 'ApiChallengeDb' not found.");
 
             services.AddDbContext<AmazingContext>(options =>
             {
-                options.UseNpgsql(this.Configuration["ConnectionString"], builder => builder.EnableRetryOnFailure(5));
+                options.UseNpgsql(connectionString, builder => builder.EnableRetryOnFailure(5));
             }, ServiceLifetime.Transient, ServiceLifetime.Transient);
 
             services.AddControllers();
@@ -62,6 +69,7 @@ namespace Amazing.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true; // for JWT debug
             }
             else
             {
@@ -80,6 +88,7 @@ namespace Amazing.API
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

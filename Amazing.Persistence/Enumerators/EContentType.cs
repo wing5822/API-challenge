@@ -2,9 +2,10 @@
 {
     public enum EContentType
     {
-        None = 0,
-        IT = 1,
-        News = 2,
-        Trading = 3,
+        Text = 0,
+        Image = 1,
+        Video = 2,
+        GoogleMap = 3,
+        Quote = 4,
     }
 }
